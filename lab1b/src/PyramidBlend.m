@@ -1,3 +1,16 @@
+%% General Process (from http://graphics.cs.cmu.edu/courses/15-463/2005_fall/www/Lectures/Pyramids.pdf)
+%{
+1. Build Laplacian pyramids LA and LB from images
+A and
+B
+2. Build a Gaussian pyramid GR from selected region
+R
+3. Form a combined pyramid LS from LA and LB using nodes
+of GR as weights:
+• LS(i,j) = GR(I,j,)*LA(I,j) + (1-GR(I,j))*LB(I,j)
+4. Collapse the LS pyramid to get the final blended image
+%}
+
 % Load images
 
 im1 = double(imread('../data/polarbear.jpg'))/255;
