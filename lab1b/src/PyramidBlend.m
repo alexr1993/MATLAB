@@ -23,9 +23,9 @@ figure; imshow(im1);
 mask = roipoly;
 close;
 pyrHeight = 4;
-LA = LaplacianPyramid(im1, pyrHeight, false);
-LB = LaplacianPyramid(im2, pyrHeight, false);
-GR = GaussianPyramid(mean(mask,3), pyrHeight, false);
+LA = LaplacianPyramid(im1, pyrHeight, true);
+LB = LaplacianPyramid(im2, pyrHeight, true);
+GR = GaussianPyramid(mean(mask,3), pyrHeight, true);
 % Blend images
 
 [nRows, nCols, nBands] = size(im1);
@@ -44,4 +44,4 @@ end;
 
 % Output result
 output=output/4;
-figure; imshow(output);
+%figure; imshow(output);

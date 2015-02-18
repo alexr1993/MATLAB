@@ -6,7 +6,8 @@ k = [1 4 6 4 1]/16;
 pyr = cell(1,num);
 
 for i = 1:num
-    imscale = imresize(imx, 2^(i-1)); % scale back up to original size
+    scale = 2^(i-1);
+    imscale = imresize(imx, scale); % scale back up to original size
     pyr{i} = imscale;
 
     if show
@@ -17,7 +18,7 @@ for i = 1:num
     imx = conv2(imx, k', 'same');
 
     % downsize
-    imx = imresize(imx, 0.5, 'nearest');    
+    imx = imresize(imx, 1/2, 'nearest');    
 end;
 
 % To read in an image, then convert it to grayscale
