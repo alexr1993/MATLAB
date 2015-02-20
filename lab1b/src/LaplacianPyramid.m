@@ -16,9 +16,13 @@ function pyr = LaplacianPyramid( im, height, show )
                 figure; imshow(pyr{len});
             end;
         else
-            pyr{i} = NormaliseImage(gau{i+1} - gau{i});
+            if ~isequal(size(gau{i}),size(gau{i+1}))
+                disp('Given Pyramid size is too large, image distorted');
+                return
+            end;
+            pyr{i} = NormaliseImage(gau{i} - gau{i+1});
             if show
-                figure; imshow(pyr{i});
+                figure; imshow(pyr{i});         
             end;
         end;
 
