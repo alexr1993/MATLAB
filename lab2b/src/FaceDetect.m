@@ -34,8 +34,13 @@ resp = imf;
 
 % TODO: implement the following function
 % resp = NormalisedCorrelation(imf, template)
+resp = normalise(xcorr2(template, imf));
+ resp = normalise(filter2(template, imf, 'same')); % 29% overlap
+% resp = normalise(conv2(imf, template, 'same'));
+figure;imshow(resp);
+figure, surf(resp), shading flat
 
-% Find local maxima with non-max suppression 
+% Find local maxima with non-max suppression  
 disp('[ Find local maxima ]');
 suppDst = 10;
 [maxVal, maxPos] = FindLocalMaxima(resp, suppDst);
