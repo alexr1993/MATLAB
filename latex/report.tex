@@ -1,0 +1,59 @@
+\documentclass[a4paper,12pt]{article}
+
+\usepackage{natbib}
+\usepackage{times}
+\usepackage{graphicx,epsfig}
+\usepackage[leftcaption]{sidecap}
+\usepackage{subfigure} % figures can have sub chunks
+\usepackage{geometry} % this maxes page usage, making the below unnecessary
+\usepackage{listings}
+
+\textwidth = 6.75in
+\oddsidemargin = -0.25in
+\textheight = 10in
+\topmargin = -0.5in
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\lhead{{\it Alex Remedios }}
+\chead{Face Recognition}
+\rhead{Lab 2B}
+\lfoot{}
+\cfoot{\thepage}
+\rfoot{}
+
+
+\newcommand{\goodgap}{%
+ \hspace{\subfigtopskip}%
+ \hspace{\subfigbottomskip}}
+
+
+\title{Lab 2B: Face Recognition}
+\author{\textbf{Alex Remedios}}
+\date{\today}
+
+\begin{document}
+
+% Set this to the language you want to use in your code listings (if any)
+\lstset{language=Matlab,breaklines,breakatwhitespace,basicstyle=\small}
+\maketitle
+
+\section{Introduction}
+\citep{szeliski}
+
+\section{Req \#1: Correlation Detector}
+
+
+\section{Req \#2: Improved Detector}
+
+
+\section{Req \#3: Nearest-Neighbour Classifier}
+
+
+\section{Req \#4: Improved Classifier}
+
+
+\bibliographystyle{apalike}
+\bibliography{refs}
+
+\appendix
+\end{document}
