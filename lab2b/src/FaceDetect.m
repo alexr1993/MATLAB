@@ -40,5 +40,5 @@ suppDst = 10;
 
 % Display and evaluate detections
 disp('[ Evaluate detections ]');
-numDetections = 50;
+numDetections = 50; % viola-jones picks up 31 faces
 EvaluateDetections(imc, template, maxPos, numDetections);
