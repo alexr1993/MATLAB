@@ -19,6 +19,7 @@ figure; imshow(imc);
 boxRows = size(template, 1);
 boxCols = size(template, 2);
 
+% Draw rectangles on the current figure for each detection
 styleStr = {'LineWidth', 2};
 for i = 1:numDetections
     rowi = maxPos(1, i);
