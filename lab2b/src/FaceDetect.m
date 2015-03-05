@@ -37,6 +37,7 @@ resp = imf;
 resp = normalise(xcorr2(template, imf));
  resp = normalise(filter2(template, imf, 'same')); % 29% overlap
 % resp = normalise(conv2(imf, template, 'same'));
+resp = normcorr(template, imf);
 figure;imshow(resp);
 figure, surf(resp), shading flat
 
