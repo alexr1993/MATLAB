@@ -8,14 +8,14 @@ function [ r ] = normcorr( template, imf )
 x = template(:);
 mx = mean(x);
 normx = x - mx;
-magx = sqrt(sum(normx .^ 2));
+magx = norm(normx);
 
 [temheight, temwidth] = size(template);
 [imheight, imwidth] = size(imf);
 r = zeros(size(imf));
 
-halfheight = floor(temheight/2);
-halfwidth = floor(temwidth/2);
+halfheight = temheight/2;
+halfwidth = temwidth/2;
 
 % Correlate for each cell in matrix
 for i = 1 : ((imwidth - temwidth) - 1) % for each column
@@ -23,9 +23,7 @@ for i = 1 : ((imwidth - temwidth) - 1) % for each column
         y = imf(j:j+temheight-1, i:i+temwidth-1);
         y = y(:);
         
-        % Set value of pixel, for the one in the centre of the template
         normy = y - mean(y);
-        magy = sqrt(sum(normy .^2));
-        r(j+halfheight,i+halfwidth) = (normx' * normy) / (magx * magy);
+        r(j+halfheight,i+halfwidth) = normx' * normy / (magx * norm(normy));
     end;
 end

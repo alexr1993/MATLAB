@@ -29,14 +29,6 @@ end;
 % Compute normalised correlation of template with image
 disp('[ Filtering with template ]');
 
-% just use the image for now
-resp = imf;
-
-% TODO: implement the following function
-% resp = NormalisedCorrelation(imf, template)
-resp = normalise(xcorr2(template, imf));
- resp = normalise(filter2(template, imf, 'same')); % 29% overlap
-% resp = normalise(conv2(imf, template, 'same'));
 resp = normcorr(template, imf);
 figure;imshow(resp);
 figure, surf(resp), shading flat
