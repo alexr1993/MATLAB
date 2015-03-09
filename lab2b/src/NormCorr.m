@@ -10,7 +10,6 @@ function [ r ] = NormCorr( imf, template )
 x = template(:);
 mx = mean(x);
 normx = x - mx;
-magx = sqrt(sum(normx .^ 2));
 % reimplement this with a mean filter
 [temheight, temwidth] = size(template);
 [imheight, imwidth] = size(imf);
@@ -27,7 +26,6 @@ for i = 1 : ((imwidth - temwidth) - 1) % for each column
         
         % Set value of pixel, for the one in the centre of the template
         normy = y - mean(y);
-        magy = sqrt(sum(normy .^2));
-        r(j+halfheight,i+halfwidth) = (normx' * normy) / (magx * magy);
+        r(j+halfheight,i+halfwidth) = (normx' * normy) / (norm(normx) * norm(normy));
     end;
 end
