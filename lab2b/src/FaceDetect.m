@@ -9,27 +9,30 @@ disp('[ Extracting features ]');
 imf = mean(imc, 3); % greyscale image for now
 
 % Select a region for template matching
-selectRegion = 1;
+selectRegion = 0;
 disp('[ Selecting template region ]');
 if (selectRegion)
     fh = figure; imshow(imc);
     rect = floor(getrect);
-    template = imf(rect(2):(rect(2)+rect(4)-1), rect(1):(rect(1)+rect(3)-1), :);
-    template = template - mean(template(:));
+    templatec = imf(rect(2):(rect(2)+rect(4)-1), rect(1):(rect(1)+rect(3)-1), :);
+    %imwrite(templatec, 'template.png'); % store patch as template
+    template = templatec - mean(templatec(:));
     close(fh);
 else
 % use fixed image
-    imt = double(imread('../data/obama.png'))/255;
-    imt = imresize(imt, [33 33]);
-    template = mean(imt, 3); % greyscale image for now
-    template = template - mean(template(:));
+    imt = double(imread('../data/template.png'))/255;
+    template = imt;
+    %imt = imresize(imt, [33 33]);
+    %template = mean(imt, 3); % greyscale image for now
+    %template = template - mean(template(:));
 end;
 
 
 % Compute normalised correlation of template with image
 disp('[ Filtering with template ]');
 
-resp = normcorr(template, imf);
+resp = NormCorr(imf, template);
+%resp = NormalisedFilter(imf, template);
 figure;imshow(resp);
 figure, surf(resp), shading flat
 
