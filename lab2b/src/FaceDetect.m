@@ -7,23 +7,23 @@ imc = double(imread('../data/g20.jpg'))/255;
 disp('[ Extracting features ]');
 
 % Select a region for template matching
-selectRegion = 0;
+selectRegion = 1;
 disp('[ Selecting template region ]');
 if (selectRegion)
     fh = figure; imshow(imc);
     rect = floor(getrect);
-    template = imc(rect(2):(rect(2)+rect(4)-1), rect(1):(rect(1)+rect(3)-1), :);
+    template2 = imc(rect(2):(rect(2)+rect(4)-1), rect(1):(rect(1)+rect(3)-1), :);
     %imwrite(template, 'templatec.png'); % store patch as template
     close(fh);
-    exit;
-else
-    % use fixed image
-    template = double(imread('../data/templatec.png'))/255;
 end;
 
-grayscale = 0;
+% use fixed image
+template = double(imread('../data/templatec.png'))/255;
+
+grayscale = 1;
 if (grayscale == 1) 
     template = mean(template, 3);
+    template2 = mean(template2, 3);
     im = mean(imc, 3);
 else
     im = imc;
@@ -33,15 +33,19 @@ end;
 disp('[ Filtering with template ]');
 
 resp = NormCorr(im, template);
-figure;imshow(resp);
+if selectRegion == 1;
+    resp2 = NormCorr(im, template2);
+end;
+figure; imshow(resp);
 figure, surf(resp), shading flat
 
 % Find local maxima with non-max suppression  
 disp('[ Find local maxima ]');
 suppDst = 10;
 [maxVal, maxPos] = FindLocalMaxima(resp, suppDst);
+[maxVal2, maxPos2] = FindLocalMaxima(resp2, suppDst);
 
 % Display and evaluate detections
 disp('[ Evaluate detections ]');
 numDetections = 50; % viola-jones picks up 31 faces
-EvaluateDetections(imc, template, maxPos, numDetections);
+EvaluateDetections(imc, template, cat(2, maxPos, maxPos2), numDetections);
