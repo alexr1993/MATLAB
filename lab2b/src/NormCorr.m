@@ -30,14 +30,17 @@ halfheight = floor(temheight/2);
 halfwidth = floor(temwidth/2);
 
 % Correlate for each cell in matrix
-for i = 1 : ((imwidth - temwidth) - 1) % for each column
-    for j = 1 : ((imheight - temheight) - 1) % for each row
-        y = im(j:j+temheight-1, i:i+temwidth-1, band);
-        y = y(:);
-        
-        % Set value of pixel, for the one in the centre of the template
-        normy = y - mean(y);
-        r(j+halfheight,i+halfwidth) ...
-            = r(j+halfheight, i+halfwidth) + (normx' * normy) / (norm(normx) * norm(normy));
+for band = 1 : imbands
+    for i = 1 : ((imwidth - temwidth) - 1) % for each column
+        for j = 1 : ((imheight - temheight) - 1) % for each row
+            y = im(j:j+temheight-1, i:i+temwidth-1, band);
+            y = y(:);
+
+            % Set value of pixel, for the one in the centre of the template
+            normy = y - mean(y);
+            r(j+halfheight,i+halfwidth) ...
+                = r(j+halfheight, i+halfwidth) + (normx(:,band)' * normy) ...
+                    / (norm(normx(:,band)) * norm(normy));
+        end;
     end;
-end
+end;

@@ -21,12 +21,18 @@ else
     template = double(imread('../data/templatec.png'))/255;
 end;
 
-figure; imshow(template);
+grayscale = 0;
+if (grayscale == 1) 
+    template = mean(template, 3);
+    im = mean(imc, 3);
+else
+    im = imc;
+end;
 
 % Compute normalised correlation of template with image
 disp('[ Filtering with template ]');
 
-resp = NormCorr(imc, template);
+resp = NormCorr(im, template);
 figure;imshow(resp);
 figure, surf(resp), shading flat
 
