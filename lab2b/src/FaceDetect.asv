@@ -5,28 +5,34 @@ imc = double(imread('../data/g20.jpg'))/255;
 
 % Extract features from image
 disp('[ Extracting features ]');
+imf = mean(imc, 3); % greyscale image for now
 
 % Select a region for template matching
-selectRegion = 0;
+selectRegion = 1;
 disp('[ Selecting template region ]');
 if (selectRegion)
     fh = figure; imshow(imc);
     rect = floor(getrect);
-    template = imc(rect(2):(rect(2)+rect(4)-1), rect(1):(rect(1)+rect(3)-1), :);
-    %imwrite(template, 'templatec.png'); % store patch as template
+    template = imf(rect(2):(rect(2)+rect(4)-1), rect(1):(rect(1)+rect(3)-1), :);
+    %imwrite(templatec, 'template.png'); % store patch as template
+    %template = templatec - mean(templatec(:));
     close(fh);
-    exit;
 else
-    % use fixed image
-    template = double(imread('../data/templatec.png'))/255;
+% use fixed image
+    imt = double(imread('../data/template.png'))/255;
+    template = imt;
+    %imt = imresize(imt, [33 33]);
+    %template = mean(imt, 3); % greyscale image for now
+    %template = template - mean(template(:));
 end;
 
-figure; imshow(template);
+
 
 % Compute normalised correlation of template with image
 disp('[ Filtering with template ]');
 
-resp = NormCorr(imc, template);
+resp = NormalisedFilter(imf, template);
+%resp = NormalisedFilter(imf, template);
 figure;imshow(resp);
 figure, surf(resp), shading flat
 

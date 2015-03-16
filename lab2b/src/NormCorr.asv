@@ -13,15 +13,13 @@ function [ r ] = NormCorr( im, template )
 [imheight, imwidth, imbands] = size(im);
 
 if tembands ~= imbands
-    disp('Template and image have differing numbers of bands, aborting correlation');
+    disp 'Template and image have differing numbers of bands, aborting correlation';
 end;
 
-normx = zeros(temheight*temwidth, tembands);
 for i = 1:tembands
-    x = template(:,:,i);
-    x = x(:);
+    x = template(:);
     mx = mean(x);
-    normx(:,i) = x - mx;
+    normx = x - mx;
 end;
 
 r = zeros(imheight, imwidth);
