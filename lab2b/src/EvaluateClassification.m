@@ -17,6 +17,8 @@ strGreen = {'Color', 'g', 'BackgroundColor', 'k', 'FontSize', 12};
 nCorrect = 0;
 for i = 1:nRects
     if (~strcmp(test_true{i}, 'x')) % Ignore false positive face detections
+        
+        % Put circle on centre of face
         plot((rects(i,2)+rects(i,4))/2, (rects(i,1)+rects(i,3))/2, 'o');
         if (strcmp(names{test_pred(i)}, test_true{i}))
             text(rects(i, 2), rects(i, 1), names{test_pred(i)}, strGreen{:});

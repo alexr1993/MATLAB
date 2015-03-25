@@ -1,0 +1,17 @@
+function [ trainingdata ] = ReadTrainingData( dataIm, nPeople, nExamples, imsz )
+%READTRAININGDATA Summary of this function goes here
+%   Detailed explanation goes here
+    trainingdata = cell(nPeople, nExamples);
+    target_size = 32 % 32x32
+    
+    img = mean(dataIm, 3);
+    for person = 1:nPeople
+        for example = 1:nExamples
+            % Select image patch
+            start_row = (imsz * (person-1)) + 1;
+            end_row = (imsz * person
+            patch = img(person-1)
+            % Resize
+
+end
+
