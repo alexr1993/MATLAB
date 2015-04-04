@@ -20,7 +20,7 @@ end;
 % use fixed image
 template = double(imread('../data/templatec.png'))/255;
 
-grayscale = 1;
+grayscale = 0;
 if (grayscale == 1) 
     template = mean(template, 3);
     im = mean(imc, 3);

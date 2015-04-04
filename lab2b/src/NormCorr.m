@@ -35,7 +35,7 @@ for band = 1 : imbands
     meannormalised = im(:,:,band) - imagemean;
     
     % Find norm over all image patches with square filter then root
-    sumofsquares = filter2(sumtemplate, meannormalised(:,:,band) .^ 2, 'same');
+    sumofsquares = filter2(sumtemplate, meannormalised .^ 2, 'same');
     imagedenom = sqrt(sumofsquares);
     
     resp = filter2(templatenormalised, meannormalised, 'same');
