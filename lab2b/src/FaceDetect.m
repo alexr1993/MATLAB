@@ -32,9 +32,7 @@ end;
 disp('[ Filtering with template ]');
 
 resp = NormCorr(im, template);
-if selectRegion == 1;
-    resp2 = NormCorr(im, template2);
-end;
+
 figure; imshow(resp);
 figure, surf(resp), shading flat
 
@@ -42,9 +40,8 @@ figure, surf(resp), shading flat
 disp('[ Find local maxima ]');
 suppDst = 10;
 [maxVal, maxPos] = FindLocalMaxima(resp, suppDst);
-[maxVal2, maxPos2] = FindLocalMaxima(resp2, suppDst);
 
 % Display and evaluate detections
 disp('[ Evaluate detections ]');
 numDetections = 50; % viola-jones picks up 31 faces
-EvaluateDetections(imc, template, cat(2, maxPos, maxPos2), numDetections);
+EvaluateDetections(imc, template, maxPos, numDetections);

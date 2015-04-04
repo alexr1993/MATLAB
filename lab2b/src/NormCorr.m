@@ -18,30 +18,28 @@ if tembands ~= imbands
     return;
 end;
 
-disp('Calculating template mean and norm');
-% Calculate mean normalised template and its norm
-templatenormalised = zeros(temheight, temwidth, tembands);
-for i = 1:tembands
-    x = template(:,:,i);
-    mx = mean(x(:));
-    templatenormalised(:,:,i) = x - mx;
-end;
-templatedenom = norm(sqrt(sum(templatenormalised(:) .^ 2)));
-
 % Calculate mean normalised image and it's norm (over patches the size of the template)
-disp('Calculating image mean and norm');
-sumtemplate = ones(imheight, imwidth);
-meantemplate = sumtemplate ./ numel(template(:,:,1));
+disp('[ Performing Normalised Cross-Correlation ]');
+sumtemplate = ones(temheight, temwidth);
+meantemplate = sumtemplate ./ (temheight * temwidth);
 
 for band = 1 : imbands
+    % Calculate template norm and mean-norm
+    x = template(:,:,band);
+    mx = mean(x(:));
+    templatenormalised = x - mx;
+    templatedenom = norm(templatenormalised(:));
+    
     % Find the mean of each template patch in the image
     imagemean = filter2(meantemplate, im(:,:,band), 'same');
-
     meannormalised = im(:,:,band) - imagemean;
-
-    sumofsquares = filter2(sumtemplate, im(:,:,band) .^ 2, 'same');
+    
+    % Find norm over all image patches with square filter then root
+    sumofsquares = filter2(sumtemplate, meannormalised(:,:,band) .^ 2, 'same');
     imagedenom = sqrt(sumofsquares);
-
-    r = r + filter2((template(:,:,band) ./ templatedenom)', meannormalised ./ imagedenom, 'same');
-
+    
+    resp = filter2(templatenormalised, meannormalised, 'same');
+    resp = resp ./ (templatedenom .* imagedenom);
+    figure;imshow(resp);
+    r = r + resp;
 end;
