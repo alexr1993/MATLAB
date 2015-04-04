@@ -19,7 +19,7 @@ test_true = {'kirchner', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ...
     'myungbak'};
 
 % Get test data
-nRects = size(rects, 1);
+nRects = size(rects, 1); % This is the size of test_true (31), there are false positives though
 imSize = 32 * 32;
 test_data = zeros(imSize, nRects);
 for i = 1:nRects
@@ -39,19 +39,22 @@ test_pred = zeros(nRects, 1);
 for i = 1:nRects
     best_match = -1;
     best_match_strength = -1;
-    
+    best_match_example = -1;
     % Find the nearest neighbour to the test image
     for person = 1:nPeople
         for example = 1:nExamples
             match_strength = norm(training_data{person}{example}-test_data(:,i));
             % Replace best match if closer fit
-            if match_strength > best_match_strength
+            if match_strength < best_match_strength || best_match_strength == -1
                 best_match = person;
+                best_match_example = example;
                 best_match_strength = match_strength;
             end;
         end;
     end;
-            
+    fprintf('Best match for %d is %d at image %d (strength: %.3f)\n',...
+        i, best_match, best_match_example, best_match_strength);
+   
     % Random classification for now
     test_pred(i) = best_match;
 end;

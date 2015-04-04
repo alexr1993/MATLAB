@@ -16,7 +16,7 @@ function [ training_data ] = ReadTrainingData( dataIm, nPeople, nExamples, imsz 
             % Resize
             patch = imresize(patch, [target_size target_size]);
             if person == 1 || person == nPeople
-                figure;imshow(patch);
+                %figure;imshow(patch);
             end
             training_data{person}{example} = patch(:);
         end
