@@ -7,7 +7,7 @@ imc = double(imread('../data/g20.jpg'))/255;
 disp('[ Extracting features ]');
 
 % Select a region for template matching
-selectRegion = 1;
+selectRegion = 0;
 disp('[ Selecting template region ]');
 if (selectRegion)
     fh = figure; imshow(imc);
@@ -23,7 +23,6 @@ template = double(imread('../data/templatec.png'))/255;
 grayscale = 1;
 if (grayscale == 1) 
     template = mean(template, 3);
-    template2 = mean(template2, 3);
     im = mean(imc, 3);
 else
     im = imc;

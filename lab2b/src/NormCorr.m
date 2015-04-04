@@ -11,36 +11,37 @@ function [ r ] = NormCorr( im, template )
 % reimplement this with a mean filter
 [temheight, temwidth, tembands] = size(template);
 [imheight, imwidth, imbands] = size(im);
+r = zeros(imheight, imwidth);
 
 if tembands ~= imbands
     disp('Template and image have differing numbers of bands, aborting correlation');
+    return;
 end;
 
-normx = zeros(temheight*temwidth, tembands);
+disp('Calculating template mean and norm');
+% Calculate mean normalised template and its norm
+templatenormalised = zeros(temheight, temwidth, tembands);
 for i = 1:tembands
     x = template(:,:,i);
-    x = x(:);
-    mx = mean(x);
-    normx(:,i) = x - mx;
+    mx = mean(x(:));
+    templatenormalised(:,:,i) = x - mx;
 end;
+templatedenom = norm(sqrt(sum(templatenormalised(:) .^ 2)));
 
-r = zeros(imheight, imwidth);
+% Calculate mean normalised image and it's norm (over patches the size of the template)
+disp('Calculating image mean and norm');
+sumtemplate = ones(imheight, imwidth);
+meantemplate = sumtemplate ./ numel(template(:,:,1));
 
-halfheight = floor(temheight/2);
-halfwidth = floor(temwidth/2);
-
-% Correlate for each cell in matrix
 for band = 1 : imbands
-    for i = 1 : ((imwidth - temwidth) - 1) % for each column
-        for j = 1 : ((imheight - temheight) - 1) % for each row
-            y = im(j:j+temheight-1, i:i+temwidth-1, band);
-            y = y(:);
+    % Find the mean of each template patch in the image
+    imagemean = filter2(meantemplate, im(:,:,band), 'same');
 
-            % Set value of pixel, for the one in the centre of the template
-            normy = y - mean(y);
-            r(j+halfheight,i+halfwidth) ...
-                = r(j+halfheight, i+halfwidth) + (normx(:,band)' * normy) ...
-                    / (norm(normx(:,band)) * norm(normy));
-        end;
-    end;
+    meannormalised = im(:,:,band) - imagemean;
+
+    sumofsquares = filter2(sumtemplate, im(:,:,band) .^ 2, 'same');
+    imagedenom = sqrt(sumofsquares);
+
+    r = r + filter2((template(:,:,band) ./ templatedenom)', meannormalised ./ imagedenom, 'same');
+
 end;
