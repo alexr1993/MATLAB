@@ -2,9 +2,15 @@
 
 % Load test and training images
 k = [1 4 1]/10; 
+grayscale = 1;
 
 im = double(imread('../data/g20.jpg'))/255;
 dataIm = double(imread('../data/facedata.png'))/255;
+if grayscale == 1
+    im = mean(im,3);
+    dataIm = mean(dataIm, 3);
+end;
+
 names={'barroso','calderon','cameron','erdogan','gillard','harper', ...
     'hollande','jintao','kirchner','merkel','monti','myungbak','noda', ...
     'obama','putin','rompuy','rousseff','singh','yudhoyono','zuma'};
@@ -43,34 +49,9 @@ for i = 1:nRects
     end;
 end;
 
+test_pred = ClassifyNearestNeighbour(training_data, test_data);
 % Classify test data
-test_pred = zeros(nRects, 1);
-for i = 1:nRects
-    best_match = -1;
-    best_match_strength = -1;
-    best_match_example = -1;
-    % Find the nearest neighbour to the test image
-    for person = 1:nPeople
-        for example = 1:nTraining
-            match_strength = 0;
-            for band = 1:imbands
-                match_strength = match_strength + ...
-                    norm(training_data{person}{example}(:,:,band) -test_data(:,i,band));
-            end;
-            % Replace best match if closer fit
-            if match_strength < best_match_strength || best_match_strength == -1
-                best_match = person;
-                best_match_example = example;
-                best_match_strength = match_strength;
-            end;
-        end;
-    end;
-    fprintf('Best match for %d is %d at image %d (strength: %.3f)\n',...
-        i, best_match, best_match_example, best_match_strength);
-   
-    % Random classification for now
-    test_pred(i) = best_match;
-end;
+
 
 % Evaluate the classification and plot results
 EvaluateClassification(test_pred, test_true, names, rects, im);
