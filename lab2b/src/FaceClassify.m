@@ -34,6 +34,7 @@ test_true = {'kirchner', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ...
 [imheight imwidth nbands] = size(im);
 % Get test data
 nRects = size(rects, 1); % This is the size of test_true (31), there are false positives though
+nTests = nRects;
 imSize = 32 * 32 * nbands;
 test_data = zeros(nRects, imSize);
 
@@ -51,8 +52,28 @@ for i = 1:nRects
 end;
 
 % Classify test data
-test_pred = ClassifyNearestNeighbour(training_data, test_data');
+%test_pred = ClassifyNearestNeighbour(training_data, test_data');
 
+% Format training_data for svm
+classes = zeros(nPeople * nTraining, 1);
+for i = 1:nPeople
+    for j = 1:nTraining
+        classes(( (i-1) * nTraining) + j) = i;
+    end;
+end;
+
+training_vecs = zeros(nPeople * nTraining, imSize);
+for i = 1:nPeople
+    for j = 1:nTraining
+        training_vecs(( (i-1) * nTraining) + j, :) = training_data{i}{j}(:);
+    end;
+end;
+
+SVMStruct = svmtrain(classes, training_vecs);
+
+% Predict using SVM
+testing_label = zeros(nTests, 1);
+[test_pred, accuracy, decisionvals] = svmpredict(testing_label, test_data, SVMStruct);
 
 % Evaluate the classification and plot results
 EvaluateClassification(test_pred, test_true, names, rects, im);
