@@ -1,6 +1,8 @@
 % FaceClassify.m
 
 % Load test and training images
+k = [1 4 6 4 1]/16; 
+
 im = double(imread('../data/g20.jpg'))/255;
 dataIm = double(imread('../data/facedata.png'))/255;
 names={'barroso','calderon','cameron','erdogan','gillard','harper', ...
@@ -9,7 +11,7 @@ names={'barroso','calderon','cameron','erdogan','gillard','harper', ...
 nPeople=20;   % number of people (rows of dataIm)
 nExamples=32; % number of examples per person (columns of dataIm)
 imsz=64;      % size of face images in dataIm (square)
-training_data = ReadTrainingData(dataIm, nPeople, nExamples, imsz);
+training_data = ReadTrainingData(dataIm, nPeople, nExamples, imsz, k);
 % Load Viola-Jones detection rectangles and set ground truth
 load('../data/vjrects', 'rects');
 test_true = {'kirchner', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ...
@@ -17,21 +19,24 @@ test_true = {'kirchner', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ...
     'cameron', 'x', 'noda', 'yudhoyono', 'calderon', 'putin', 'x', ...
     'rompuy', 'merkel', 'x', 'x', 'obama', 'singh', 'jintao', 'zuma', ...
     'myungbak'};
-
+[imheight imwidth imbands] = size(im);
 % Get test data
 nRects = size(rects, 1); % This is the size of test_true (31), there are false positives though
 imSize = 32 * 32;
-test_data = zeros(imSize, nRects);
+test_data = zeros(imSize, nRects, imbands);
 for i = 1:nRects
-    imi = im(rects(i, 1):rects(i, 3), rects(i, 2):rects(i, 4), :);
-
-    imf = mean(imi, 3); % grayscale
-    imf = imresize(imf, [32 32]); % downsize
-    % subtract mean and divide standard deviation
-    imf = imf - mean(imf(:));
-    imf = imf / std(imf(:));
-    
-    test_data(:, i) = (imf(:) - mean(imf(:))) ./ std(imf(:));
+    rows = rects(i, 1):rects(i, 3);
+    cols = rects(i, 2):rects(i, 4);
+    imi = im(rows, cols, :);
+    for band = 1:imbands
+        face = imi(:,:,band);
+        %face = conv2(k, k, face); % blur before downsizing to prevent moiring
+        face = imresize(face, [32 32]); % downsize
+        % subtract mean and divide standard deviation
+        face = face - mean(face(:));
+        face = face / std(face(:));
+        test_data(:, i, band) = (face(:) - mean(face(:))) ./ std(face(:));
+    end;
 end;
 
 % Classify test data
@@ -43,7 +48,11 @@ for i = 1:nRects
     % Find the nearest neighbour to the test image
     for person = 1:nPeople
         for example = 1:nExamples
-            match_strength = norm(training_data{person}{example}-test_data(:,i));
+            match_strength = 0;
+            for band = 1:imbands
+                match_strength = match_strength + ...
+                    norm(training_data{person}{example}(:,:,band) -test_data(:,i,band));
+            end;
             % Replace best match if closer fit
             if match_strength < best_match_strength || best_match_strength == -1
                 best_match = person;
