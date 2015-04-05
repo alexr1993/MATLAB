@@ -24,8 +24,7 @@ function [ training_data ] = ReadTrainingData( dataIm, nPeople, nExamples, imsz,
                     %figure;imshow(patch);
                 end
             
-                training_data{person}{example}(:,:,band) = ...
-                    (patchband(:) - mean(patchband(:))) ./ std(patchband(:));
+                training_data{person}{example}(:,:,band) = FeatureScale(patchband(:));
             end;
         end
     end

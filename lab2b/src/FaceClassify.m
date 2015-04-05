@@ -1,7 +1,7 @@
 % FaceClassify.m
 
 % Load test and training images
-k = [1 4 6 4 1]/16; 
+k = [1 4 1]/10; 
 
 im = double(imread('../data/g20.jpg'))/255;
 dataIm = double(imread('../data/facedata.png'))/255;
@@ -30,12 +30,10 @@ for i = 1:nRects
     imi = im(rows, cols, :);
     for band = 1:imbands
         face = imi(:,:,band);
-        %face = conv2(k, k, face); % blur before downsizing to prevent moiring
+        %face = conv2(k, k, face); % blur before downsizing (doesn't seem
+        %to help)
         face = imresize(face, [32 32]); % downsize
-        % subtract mean and divide standard deviation
-        face = face - mean(face(:));
-        face = face / std(face(:));
-        test_data(:, i, band) = (face(:) - mean(face(:))) ./ std(face(:));
+        test_data(:, i, band) = FeatureScale(face(:));
     end;
 end;
 
