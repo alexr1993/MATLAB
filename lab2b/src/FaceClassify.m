@@ -35,7 +35,7 @@ test_true = {'kirchner', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ...
 % Get test data
 nRects = size(rects, 1); % This is the size of test_true (31), there are false positives though
 imSize = 32 * 32 * nbands;
-test_data = zeros(imSize, nRects);
+test_data = zeros(nRects, imSize);
 
 % Read in test data from G20 image
 for i = 1:nRects
@@ -47,11 +47,11 @@ for i = 1:nRects
     %face = conv2(k, k, face); % blur before downsizing (doesn't seem
     %to help)
     face = imresize(face, [32 32]); % downsize
-    test_data(:, i) = FeatureScale(face(:)); % flatten image data to 1D
+    test_data(i, :) = FeatureScale(face(:)); % flatten image data to 1D
 end;
 
-test_pred = ClassifyNearestNeighbour(training_data, test_data);
 % Classify test data
+test_pred = ClassifyNearestNeighbour(training_data, test_data');
 
 
 % Evaluate the classification and plot results
