@@ -3,7 +3,7 @@ function [ training_data ] = ReadTrainingData( dataIm, nPeople, nExamples, imsz,
 %   Detailed explanation goes here
     training_data = cell(nPeople, nExamples);
     target_size = 32; % 32x32
-    [height width bands] = size(dataIm);
+    [height, width] = size(dataIm);
     
     for person = 1:nPeople
         for example = 1:nExamples
@@ -14,18 +14,15 @@ function [ training_data ] = ReadTrainingData( dataIm, nPeople, nExamples, imsz,
             end_col = (example * imsz);
             patch = dataIm(start_row:end_row, start_col:end_col,:);
             
-            for band = 1:bands
-                patchband = patch(:,:,band);
-                %patchband = conv2(k, k, patchband); % blur before downsize
-                
-                % Resize
-                patchband = imresize(patchband, [target_size target_size]);
-                if person == 1 || person == nPeople
-                    %figure;imshow(patch);
-                end
-            
-                training_data{person}{example}(:,:,band) = FeatureScale(patchband(:));
-            end;
+            %patch = conv2(k, k, patch); % blur before downsize
+
+            % Resize
+            patch = imresize(patch, [target_size target_size]);
+            if person == 1 || person == nPeople
+                %figure;imshow(patch);
+            end
+
+            training_data{person}{example}(:,:) = FeatureScale(patch(:));
         end
     end
 end

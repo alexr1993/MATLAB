@@ -2,7 +2,7 @@
 
 % Load test and training images
 k = [1 4 1]/10; 
-grayscale = 1;
+grayscale = 0;
 
 im = double(imread('../data/g20.jpg'))/255;
 dataIm = double(imread('../data/facedata.png'))/255;
@@ -31,22 +31,23 @@ test_true = {'kirchner', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ...
     'cameron', 'x', 'noda', 'yudhoyono', 'calderon', 'putin', 'x', ...
     'rompuy', 'merkel', 'x', 'x', 'obama', 'singh', 'jintao', 'zuma', ...
     'myungbak'};
-[imheight imwidth imbands] = size(im);
+[imheight imwidth nbands] = size(im);
 % Get test data
 nRects = size(rects, 1); % This is the size of test_true (31), there are false positives though
-imSize = 32 * 32;
-test_data = zeros(imSize, nRects, imbands);
+imSize = 32 * 32 * nbands;
+test_data = zeros(imSize, nRects);
+
+% Read in test data from G20 image
 for i = 1:nRects
     rows = rects(i, 1):rects(i, 3);
     cols = rects(i, 2):rects(i, 4);
     imi = im(rows, cols, :);
-    for band = 1:imbands
-        face = imi(:,:,band);
-        %face = conv2(k, k, face); % blur before downsizing (doesn't seem
-        %to help)
-        face = imresize(face, [32 32]); % downsize
-        test_data(:, i, band) = FeatureScale(face(:));
-    end;
+    
+    face = imi;
+    %face = conv2(k, k, face); % blur before downsizing (doesn't seem
+    %to help)
+    face = imresize(face, [32 32]); % downsize
+    test_data(:, i) = FeatureScale(face(:)); % flatten image data to 1D
 end;
 
 test_pred = ClassifyNearestNeighbour(training_data, test_data);
