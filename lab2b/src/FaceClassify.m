@@ -31,7 +31,7 @@ for i = 1:nRects
     imf = imf - mean(imf(:));
     imf = imf / std(imf(:));
     
-    test_data(:, i) = imf(:);
+    test_data(:, i) = (imf(:) - mean(imf(:))) ./ std(imf(:));
 end;
 
 % Classify test data

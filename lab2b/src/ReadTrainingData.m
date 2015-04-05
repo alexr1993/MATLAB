@@ -18,7 +18,7 @@ function [ training_data ] = ReadTrainingData( dataIm, nPeople, nExamples, imsz 
             if person == 1 || person == nPeople
                 %figure;imshow(patch);
             end
-            training_data{person}{example} = patch(:);
+            training_data{person}{example} = (patch(:) - mean(patch(:))) ./ std(patch(:));
         end
     end
 end
