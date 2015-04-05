@@ -21,9 +21,9 @@ imsz=64;      % size of face images in dataIm (square)
 % Split data into training and validation sets
 nTraining=24;
 nValidation=nExamples - nTraining;
-training_data = ReadTrainingData(dataIm, nPeople, nExamples, imsz, k);
-validation_data = training_data(:, nTraining+1:nExamples);
-training_data = training_data(:, 1:nTraining);
+all_data = ReadTrainingData(dataIm, nPeople, nExamples, imsz, k);
+validation_data = all_data(:, nTraining+1:nExamples);
+training_data = all_data(:, 1:nTraining);
 
 % Load Viola-Jones detection rectangles and set ground truth
 load('../data/vjrects', 'rects');
@@ -73,14 +73,14 @@ end;
 training_vecs = zeros(nPeople * nTraining, imSize);
 for i = 1:nPeople
     for j = 1:nTraining
-        training_vecs(( (i-1) * nTraining) + j, :) = training_data{i}{j}(:);
+        training_vecs(( (i-1) * nTraining) + j, :) = training_data{i,j}(:);
     end;
 end;
 
 validation_vecs = zeros(nPeople * nValidation, imSize);
 for i = 1:nPeople
     for j = 1:nValidation
-        validation_vecs(( (i-1) * nValidation) + j, :) = validation_data{i}{j}(:);
+        validation_vecs(( (i-1) * nValidation) + j, :) = validation_data{i,j}(:);
     end;
 end;
 
