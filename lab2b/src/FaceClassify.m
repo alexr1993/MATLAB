@@ -11,7 +11,13 @@ names={'barroso','calderon','cameron','erdogan','gillard','harper', ...
 nPeople=20;   % number of people (rows of dataIm)
 nExamples=32; % number of examples per person (columns of dataIm)
 imsz=64;      % size of face images in dataIm (square)
+
+% Split data into training and validation sets
+nTraining=24;
 training_data = ReadTrainingData(dataIm, nPeople, nExamples, imsz, k);
+validation_data = training_data(:, nTraining+1:32);
+training_data = training_data(:, 1:nTraining);
+
 % Load Viola-Jones detection rectangles and set ground truth
 load('../data/vjrects', 'rects');
 test_true = {'kirchner', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ...
@@ -45,7 +51,7 @@ for i = 1:nRects
     best_match_example = -1;
     % Find the nearest neighbour to the test image
     for person = 1:nPeople
-        for example = 1:nExamples
+        for example = 1:nTraining
             match_strength = 0;
             for band = 1:imbands
                 match_strength = match_strength + ...
