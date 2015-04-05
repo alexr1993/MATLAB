@@ -20,8 +20,9 @@ imsz=64;      % size of face images in dataIm (square)
 
 % Split data into training and validation sets
 nTraining=24;
+nValidation=nExamples - nTraining;
 training_data = ReadTrainingData(dataIm, nPeople, nExamples, imsz, k);
-validation_data = training_data(:, nTraining+1:32);
+validation_data = training_data(:, nTraining+1:nExamples);
 training_data = training_data(:, 1:nTraining);
 
 % Load Viola-Jones detection rectangles and set ground truth
@@ -55,10 +56,17 @@ end;
 %test_pred = ClassifyNearestNeighbour(training_data, test_data');
 
 % Format training_data for svm
-classes = zeros(nPeople * nTraining, 1);
+trainingclasses = zeros(nPeople * nTraining, 1);
 for i = 1:nPeople
     for j = 1:nTraining
-        classes(( (i-1) * nTraining) + j) = i;
+        trainingclasses(( (i-1) * nTraining) + j) = i;
+    end;
+end;
+
+validationclasses = zeros(nPeople * nValidation, 1);
+for i = 1:nPeople
+    for j = 1:nValidation
+        validationclasses(( (i-1) * nValidation) + j) = i;
     end;
 end;
 
@@ -69,11 +77,21 @@ for i = 1:nPeople
     end;
 end;
 
-SVMStruct = svmtrain(classes, training_vecs);
+validation_vecs = zeros(nPeople * nValidation, imSize);
+for i = 1:nPeople
+    for j = 1:nValidation
+        validation_vecs(( (i-1) * nValidation) + j, :) = validation_data{i}{j}(:);
+    end;
+end;
+
+SVMStruct = svmtrain(trainingclasses, training_vecs, '-t 0');
+
+% Check accuracy on validation set
+[valid_pred, accuracy, decisionvals] = svmpredict(validationclasses, validation_vecs , SVMStruct);
 
 % Predict using SVM
 testing_label = zeros(nTests, 1);
-[test_pred, accuracy, decisionvals] = svmpredict(testing_label, test_data, SVMStruct);
+test_pred = svmpredict(testing_label, test_data, SVMStruct);
 
 % Evaluate the classification and plot results
 EvaluateClassification(test_pred, test_true, names, rects, im);
