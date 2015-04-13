@@ -84,7 +84,7 @@ for i = 1:nPeople
     end;
 end;
 
-SVMStruct = svmtrain(trainingclasses, training_vecs, '-t 0');
+SVMStruct = svmtrain(trainingclasses, training_vecs, '-s 1 -t 1 -d 3');
 
 % Check accuracy on validation set
 [valid_pred, accuracy, decisionvals] = svmpredict(validationclasses, validation_vecs , SVMStruct);
