@@ -40,6 +40,5 @@ for band = 1 : imbands
     
     resp = filter2(templatenormalised, meannormalised, 'same');
     resp = resp ./ (templatedenom .* imagedenom);
-    figure;imshow(resp);
     r = r + resp;
 end;

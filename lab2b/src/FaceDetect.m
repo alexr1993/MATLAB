@@ -33,9 +33,6 @@ disp('[ Filtering with template ]');
 
 resp = NormCorr(im, template);
 
-figure; imshow(resp);
-figure, surf(resp), shading flat
-
 % Find local maxima with non-max suppression  
 disp('[ Find local maxima ]');
 suppDst = 10;

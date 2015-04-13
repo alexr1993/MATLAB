@@ -22,7 +22,7 @@ function [ training_data ] = ReadTrainingData( dataIm, nPeople, nExamples, imsz,
                 figure;imshow(patch);
             end
 
-            training_data{person,example}(:,:) = FeatureScale(patch(:));
+            training_data{person,example}(:,:) = patch(:);
         end
     end
 end

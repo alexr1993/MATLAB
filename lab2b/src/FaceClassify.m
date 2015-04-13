@@ -49,7 +49,7 @@ for i = 1:nRects
     %face = conv2(k, k, face); % blur before downsizing (doesn't seem
     %to help)
     face = imresize(face, [32 32]); % downsize
-    test_data(i, :) = FeatureScale(face(:)); % flatten image data to 1D
+    test_data(i, :) = face(:); % flatten image data to 1D
 end;
 
 % Classify test data
