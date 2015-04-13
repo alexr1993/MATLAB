@@ -12,13 +12,12 @@ disp('[ Selecting template region ]');
 if (selectRegion)
     fh = figure; imshow(imc);
     rect = floor(getrect);
-    template2 = imc(rect(2):(rect(2)+rect(4)-1), rect(1):(rect(1)+rect(3)-1), :);
+    template = imc(rect(2):(rect(2)+rect(4)-1), rect(1):(rect(1)+rect(3)-1), :);
     %imwrite(template, 'templatec.png'); % store patch as template
     close(fh);
+else
+    template = double(imread('../data/templatec.png'))/255;
 end;
-
-% use fixed image
-template = double(imread('../data/templatec.png'))/255;
 
 grayscale = 0;
 if (grayscale == 1) 
