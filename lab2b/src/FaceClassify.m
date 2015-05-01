@@ -49,6 +49,8 @@ for i = 1:nRects
     %face = conv2(k, k, face); % blur before downsizing (doesn't seem
     %to help)
     face = imresize(face, [32 32]); % downsize
+    face = face - mean(face(:));
+    face = face / std(face(:));
     test_data(i, :) = face(:); % flatten image data to 1D
 end;
 
