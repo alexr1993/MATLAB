@@ -18,7 +18,7 @@ function [ test_pred ] = ClassifyNearestNeighbour( training_data, test_data )
                 match_strength = 0;
                 for band = 1:imbands
                     match_strength = match_strength + ...
-                        norm(training_data{person}{example}(:,:,band) -test_data(:,i,band));
+                        norm(training_data{person,example}(:,:,band) -test_data(:,i,band));
                 end;
                 % Replace best match if closer fit
                 if match_strength < best_match_strength || best_match_strength == -1

@@ -52,46 +52,53 @@ for i = 1:nRects
     test_data(i, :) = face(:); % flatten image data to 1D
 end;
 
+nearestNeighbour = 1;
+
 % Classify test data
-%test_pred = ClassifyNearestNeighbour(training_data, test_data');
-
-% Format training_data for svm
-trainingclasses = zeros(nPeople * nTraining, 1);
-for i = 1:nPeople
-    for j = 1:nTraining
-        trainingclasses(( (i-1) * nTraining) + j) = i;
+if nearestNeighbour == 1
+    % Nearest Neighbour Classify
+    test_pred = ClassifyNearestNeighbour(training_data, test_data');
+else
+    % SVM Classify
+    
+    % Format training_data for svm
+    trainingclasses = zeros(nPeople * nTraining, 1);
+    for i = 1:nPeople
+        for j = 1:nTraining
+            trainingclasses(( (i-1) * nTraining) + j) = i;
+        end;
     end;
-end;
 
-validationclasses = zeros(nPeople * nValidation, 1);
-for i = 1:nPeople
-    for j = 1:nValidation
-        validationclasses(( (i-1) * nValidation) + j) = i;
+    validationclasses = zeros(nPeople * nValidation, 1);
+    for i = 1:nPeople
+        for j = 1:nValidation
+            validationclasses(( (i-1) * nValidation) + j) = i;
+        end;
     end;
-end;
 
-training_vecs = zeros(nPeople * nTraining, imSize);
-for i = 1:nPeople
-    for j = 1:nTraining
-        training_vecs(( (i-1) * nTraining) + j, :) = training_data{i,j}(:);
+    training_vecs = zeros(nPeople * nTraining, imSize);
+    for i = 1:nPeople
+        for j = 1:nTraining
+            training_vecs(( (i-1) * nTraining) + j, :) = training_data{i,j}(:);
+        end;
     end;
-end;
 
-validation_vecs = zeros(nPeople * nValidation, imSize);
-for i = 1:nPeople
-    for j = 1:nValidation
-        validation_vecs(( (i-1) * nValidation) + j, :) = validation_data{i,j}(:);
+    validation_vecs = zeros(nPeople * nValidation, imSize);
+    for i = 1:nPeople
+        for j = 1:nValidation
+            validation_vecs(( (i-1) * nValidation) + j, :) = validation_data{i,j}(:);
+        end;
     end;
+
+    SVMStruct = svmtrain(trainingclasses, training_vecs, '-s 1 -t 1 -d 3');
+
+    % Check accuracy on validation set
+    [valid_pred, accuracy, decisionvals] = svmpredict(validationclasses, validation_vecs , SVMStruct);
+
+    % Predict using SVM
+    testing_label = zeros(nTests, 1);
+    test_pred = svmpredict(testing_label, test_data, SVMStruct);
 end;
-
-SVMStruct = svmtrain(trainingclasses, training_vecs, '-s 1 -t 1 -d 3');
-
-% Check accuracy on validation set
-[valid_pred, accuracy, decisionvals] = svmpredict(validationclasses, validation_vecs , SVMStruct);
-
-% Predict using SVM
-testing_label = zeros(nTests, 1);
-test_pred = svmpredict(testing_label, test_data, SVMStruct);
 
 % Evaluate the classification and plot results
 EvaluateClassification(test_pred, test_true, names, rects, im);
