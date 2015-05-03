@@ -4,6 +4,8 @@
 grayscale = 0;
 nearestNeighbour = 1;
 supportVectorMachine = 1;
+svm_params = '-s 1 -t 1 -d 3';
+svm_params = '';
 
 % Globals
 names={'barroso','calderon','cameron','erdogan','gillard','harper', ...
@@ -98,7 +100,7 @@ if supportVectorMachine == 1
         end;
     end;
 
-    SVMStruct = svmtrain(trainingclasses, training_vecs, '-s 1 -t 1 -d 3');
+    SVMStruct = svmtrain(trainingclasses, training_vecs, svm_params);
 
     % Check accuracy on validation set
     [valid_pred, accuracy, decisionvals] = svmpredict(validationclasses, validation_vecs , SVMStruct);
