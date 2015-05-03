@@ -71,33 +71,11 @@ if supportVectorMachine == 1
 
     % SVM Classify
     % Format training_data for svm
-    trainingclasses = zeros(nPeople * nTraining, 1);
-    for i = 1:nPeople
-        for j = 1:nTraining
-            trainingclasses(( (i-1) * nTraining) + j) = i;
-        end;
-    end;
-
-    validationclasses = zeros(nPeople * nValidation, 1);
-    for i = 1:nPeople
-        for j = 1:nValidation
-            validationclasses(( (i-1) * nValidation) + j) = i;
-        end;
-    end;
-
-    training_vecs = zeros(nPeople * nTraining, imSize);
-    for i = 1:nPeople
-        for j = 1:nTraining
-            training_vecs(( (i-1) * nTraining) + j, :) = training_data{i,j}(:);
-        end;
-    end;
-
-    validation_vecs = zeros(nPeople * nValidation, imSize);
-    for i = 1:nPeople
-        for j = 1:nValidation
-            validation_vecs(( (i-1) * nValidation) + j, :) = validation_data{i,j}(:);
-        end;
-    end;
+    [training_classes training_vecs] = ...
+        FormatTrainingData(training_data, nPeople, nTraining, imSize);
+    
+    [validation_classes validation_vecs] = ...
+        FormatTrainingData(validation_data, nPeople, nValidation, imSize);
 
 %{
     bestcv = 0;
@@ -113,10 +91,10 @@ if supportVectorMachine == 1
     end;
     %}
  
-    SVMStruct = svmtrain(trainingclasses, training_vecs, svm_params);
+    SVMStruct = svmtrain(training_classes, training_vecs, svm_params);
 
     % Check accuracy on validation set
-    [valid_pred, accuracy, decisionvals] = svmpredict(validationclasses, validation_vecs , SVMStruct);
+    [valid_pred, accuracy, decisionvals] = svmpredict(validation_classes, validation_vecs , SVMStruct);
 
     % Predict using SVM
     testing_label = zeros(nTests, 1);
