@@ -1,9 +1,9 @@
 % FaceDetect.m
 
 % Configuration
-templateMatching = 1; % 0 for eigenfaces, 1 for templatematching
+templateMatching = 0; % 0 for eigenfaces, 1 for templatematching
 selectRegion = 0;
-grayscale = 0;
+grayscale = 1;
 storedTemplate = '../data/templatec.png';
 
 % Read source images
@@ -62,6 +62,7 @@ else
         FormatTrainingData(validation_data, nPeople, nValidation, imSize);
     
     [faces, mu] = EigenFaces(im, training_vecs);
+    resp = CorrelateEigenFaces(im, faces, mu);
 end;
 
 % Find local maxima with non-max suppression  
