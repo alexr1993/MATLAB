@@ -30,7 +30,12 @@ end;
 % Compute normalised correlation of template with image
 disp('[ Filtering with template ]');
 
-resp = NormCorr(im, template);
+templateMatching = 0;
+if templateMatching == 0 
+    resp = NormCorr(im, template);
+else
+    resp = EigenFaces(im, template);
+end;
 
 % Find local maxima with non-max suppression  
 disp('[ Find local maxima ]');
