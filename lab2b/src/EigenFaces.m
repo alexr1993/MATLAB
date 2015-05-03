@@ -3,7 +3,7 @@ function [ resp ] = EigenFaces( im, trainingdata )
 %training data
 %   Detailed explanation goes here
 
-% TODO Calculate eigenvalues of training set
+[V, D] = eig(trainingdata);
 
 % TODO PCA to find high-variance features
 

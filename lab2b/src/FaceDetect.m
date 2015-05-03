@@ -1,4 +1,11 @@
 % FaceDetect.m
+
+% Configuration
+templateMatching = 1; % 0 for eigenfaces, 1 for templatematching
+selectRegion = 0;
+grayscale = 0;
+storedTemplate = '../data/templatec.png';
+
 % Read source image 
 disp('[ Reading source image ]');
 imc = double(imread('../data/g20.jpg'))/255;
@@ -7,7 +14,6 @@ imc = double(imread('../data/g20.jpg'))/255;
 disp('[ Extracting features ]');
 
 % Select a region for template matching
-selectRegion = 0;
 disp('[ Selecting template region ]');
 if (selectRegion)
     fh = figure; imshow(imc);
@@ -16,10 +22,9 @@ if (selectRegion)
     %imwrite(template, 'templatec.png'); % store patch as template
     close(fh);
 else
-    template = double(imread('../data/templatec.png'))/255;
+    template = double(imread(storedTemplate))/255;
 end;
 
-grayscale = 0;
 if (grayscale == 1) 
     template = mean(template, 3);
     im = mean(imc, 3);
@@ -30,8 +35,7 @@ end;
 % Compute normalised correlation of template with image
 disp('[ Filtering with template ]');
 
-templateMatching = 0;
-if templateMatching == 0 
+if templateMatching == 1 
     resp = NormCorr(im, template);
 else
     resp = EigenFaces(im, template);
