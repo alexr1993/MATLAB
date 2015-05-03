@@ -26,7 +26,7 @@ test_true = {'kirchner', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ...
 
 % Split data into training and validation sets
 nTraining = 24;
-nValidation=nExamples - nTraining;
+nValidation = nExamples - nTraining;
 all_data = ReadTrainingData(dataIm, nPeople, nExamples, imsz);
 validation_data = all_data(:, nTraining+1:nExamples);
 training_data = all_data(:, 1:nTraining);
@@ -40,7 +40,8 @@ end;
 
 nRects = size(rects, 1); % This is the size of test_true (31), there are false positives though
 nTests = nRects;
-imSize = 32 * 32 * nbands;
+nBands = size(dataIm, 3);
+imSize = 32 * 32 * nBands;
 test_data = zeros(nRects, imSize);
 
 % Read in test data from G20 image
@@ -97,8 +98,8 @@ if supportVectorMachine == 1
     [valid_pred, accuracy, decisionvals] = svmpredict(validation_classes, validation_vecs , SVMStruct);
 
     % Predict using SVM
-    testing_label = zeros(nTests, 1);
-    test_pred = svmpredict(testing_label, test_data, SVMStruct);
+    test_label = zeros(nTests, 1);
+    test_pred = svmpredict(test_label, test_data, SVMStruct);
     % Evaluate the classification and plot results
     EvaluateClassification(test_pred, test_true, names, rects, im);
 end;
