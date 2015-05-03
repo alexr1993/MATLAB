@@ -1,9 +1,8 @@
-function [ training_data ] = ReadTrainingData( dataIm, nPeople, nExamples, imsz, k )
+function [ training_data ] = ReadTrainingData( dataIm, nPeople, nExamples, imsz )
 %READTRAININGDATA Summary of this function goes here
 %   Detailed explanation goes here
     training_data = cell(nPeople, nExamples);
     target_size = 32; % 32x32
-    [height, width] = size(dataIm);
     
     for person = 1:nPeople
         for example = 1:nExamples
@@ -23,7 +22,7 @@ function [ training_data ] = ReadTrainingData( dataIm, nPeople, nExamples, imsz,
             end
             patch = patch - mean(patch(:));
             patch = patch / std(patch(:));
-            training_data{person,example}(:,:) = patch(:);
+            training_data{person,example} = patch;
         end
     end
 end
