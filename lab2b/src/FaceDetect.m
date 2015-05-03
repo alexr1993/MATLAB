@@ -1,14 +1,15 @@
 % FaceDetect.m
 
 % Configuration
-templateMatching = 0; % 0 for eigenfaces, 1 for templatematching
+templateMatching = 1; % 0 for eigenfaces, 1 for templatematching
 selectRegion = 0;
 grayscale = 0;
 storedTemplate = '../data/templatec.png';
 
-% Read source image 
+% Read source images
 disp('[ Reading source image ]');
 imc = double(imread('../data/g20.jpg'))/255;
+dataIm = double(imread('../data/facedata.png'))/255;
 
 % Extract features from image
 disp('[ Extracting features ]');
@@ -28,6 +29,7 @@ end;
 if (grayscale == 1) 
     template = mean(template, 3);
     im = mean(imc, 3);
+    dataIm = mean(dataIm, 3);
 else
     im = imc;
 end;
@@ -50,7 +52,16 @@ else
     validation_data = all_data(:, nTraining+1:nExamples);
     training_data = all_data(:, 1:nTraining);
     
-    resp = EigenFaces(im, training_data);
+    nBands = size(im, 3);
+    imSize = 32 * 32 * nBands;
+
+    [training_classes, training_vecs] = ...
+        FormatTrainingData(training_data, nPeople, nTraining, imSize);
+    
+    [validation_classes, validation_vecs] = ...
+        FormatTrainingData(validation_data, nPeople, nValidation, imSize);
+    
+    [faces, mu] = EigenFaces(im, training_vecs);
 end;
 
 % Find local maxima with non-max suppression  

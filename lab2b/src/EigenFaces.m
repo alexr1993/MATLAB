@@ -1,12 +1,21 @@
-function [ resp ] = EigenFaces( im, training_data )
+function [ faces, mu ] = EigenFaces( im, training_vecs )
 %EIGENFACES Returns response of image when compared with eigenfaces of
 %training data
-%   trainingdata must be an nPerson x nExample cell array containing 
-[nPerson, nExample] = size(training_data);
-[V, D] = eig(training_data);
+%   training_vecs must be an nPerson x nPixels matrix
 
-% TODO PCA to find high-variance features
+[nPerson, nPixels] = size(training_vecs);
 
-resp = im; % TODO, implement
+% Subtract mean of images
+mu = mean(training_vecs, 1);
+training_vecs = training_vecs - repmat(mu, nPerson, 1);
+
+% Find covariance
+covariance = cov(training_vecs);
+
+% Find Eigenvalues and EigenVectors
+[V, D] = eig(covariance);
+
+% Take best 10 EigenFaces
+faces = V(nPixels-10:nPixels,:);
 end
 

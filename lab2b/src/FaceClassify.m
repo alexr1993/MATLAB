@@ -1,7 +1,7 @@
 % FaceClassify.m
 
 % Configuration
-grayscale = 0;
+grayscale = 1;
 nearestNeighbour = 0;
 supportVectorMachine = 1;
 svm_params = '-q -s 1 -t 1 -d 3 -c 8 -g 1';
@@ -23,6 +23,12 @@ test_true = {'kirchner', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', ...
     'myungbak'};
 
 % Load test and training images
+im = double(imread('../data/g20.jpg'))/255;
+dataIm = double(imread('../data/facedata.png'))/255;
+if grayscale == 1
+    im = mean(im,3);
+    dataIm = mean(dataIm, 3);
+end;
 
 % Split data into training and validation sets
 nTraining = 24;
@@ -31,12 +37,7 @@ all_data = ReadTrainingData(dataIm, nPeople, nExamples, imsz);
 validation_data = all_data(:, nTraining+1:nExamples);
 training_data = all_data(:, 1:nTraining);
 
-im = double(imread('../data/g20.jpg'))/255;
-dataIm = double(imread('../data/facedata.png'))/255;
-if grayscale == 1
-    im = mean(im,3);
-    dataIm = mean(dataIm, 3);
-end;
+
 
 nRects = size(rects, 1); % This is the size of test_true (31), there are false positives though
 nTests = nRects;
