@@ -1,7 +1,7 @@
 % FaceDetect.m
 
 % Configuration
-templateMatching = 1; % 0 for eigenfaces, 1 for templatematching
+templateMatching = 0; % 0 for eigenfaces, 1 for templatematching
 selectRegion = 0;
 grayscale = 0;
 storedTemplate = '../data/templatec.png';
@@ -38,7 +38,19 @@ disp('[ Filtering with template ]');
 if templateMatching == 1 
     resp = NormCorr(im, template);
 else
-    resp = EigenFaces(im, template);
+    % Read Training Data
+    nPeople = 20;   % number of people (rows of dataIm)
+    nExamples = 32; % number of examples per person (columns of dataIm)
+    imsz = 64;      % size of face images in dataIm (square)
+    
+    % Split data into training and validation sets
+    nTraining = 24;
+    nValidation = nExamples - nTraining;
+    all_data = ReadTrainingData(dataIm, nPeople, nExamples, imsz);
+    validation_data = all_data(:, nTraining+1:nExamples);
+    training_data = all_data(:, 1:nTraining);
+    
+    resp = EigenFaces(im, training_data);
 end;
 
 % Find local maxima with non-max suppression  
