@@ -9,15 +9,8 @@ function [ faces, mu ] = EigenFaces( im, training_vecs )
 mu = mean(training_vecs, 1);
 training_vecs = training_vecs - repmat(mu, nPerson, 1);
 
-% Find covariance
-covariance = training_vecs * training_vecs';
-
-% Find Eigenvalues and EigenVectors
-[V, D] = eig(covariance);
-
-% Take best 10 EigenFaces
-faces = V(nPerson-10:nPerson,:);
-faces = faces * training_vecs;
+coeff = pca(training_vecs, 'NumComponents', 15);
+faces = coeff';
 disp('[ Constructed Eigenfaces ]');
 end
 

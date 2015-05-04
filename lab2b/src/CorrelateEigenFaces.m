@@ -6,6 +6,14 @@ half_size = patch_size/2;
 [height, width, bands] = size(im);
 resp = zeros(height, width);
 
+% Mean normalise image
+k = ones(patch_size) / (patch_size*patch_size);
+mean_im = filter2(k, im, 'same');
+im = im - mean_im;
+       
+% projection matrix
+projection_mat = eye(patch_size*patch_size) - (faces'*faces);
+
 i = 1;
 while i <= ((width - patch_size) - 1) % for each column
     j = 1;
@@ -17,8 +25,9 @@ while i <= ((width - patch_size) - 1) % for each column
         y = y - mu';
 
         % Calc y in eigenspace
-        omegaF = faces * y;
-        resp(j+half_size,i+half_size) = mean(omegaF);
+        projection = faces * y; % gives nfaces x ncomponents vec
+        projected_face = projection_mat * y; % Face in eigenspace
+        resp(j+half_size,i+half_size) = 1 - norm(projected_face);
         j = j + 1;
     end;
     i = i + 1;
