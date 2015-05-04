@@ -1,7 +1,7 @@
 % FaceClassify.m
 
 % Configuration
-grayscale = 1;
+grayscale = 0;
 nearestNeighbour = 0;
 supportVectorMachine = 1;
 svm_params = '-q -s 1 -t 1 -d 3 -c 8 -g 1';
@@ -31,7 +31,7 @@ if grayscale == 1
 end;
 
 % Split data into training and validation sets
-nTraining = 24;
+nTraining = 28;
 nValidation = nExamples - nTraining;
 all_data = ReadTrainingData(dataIm, nPeople, nExamples, imsz);
 validation_data = all_data(:, nTraining+1:nExamples);
@@ -73,23 +73,25 @@ if supportVectorMachine == 1
 
     % SVM Classify
     % Format training_data for svm
-    [training_classes training_vecs] = ...
+    [training_classes, training_vecs] = ...
         FormatTrainingData(training_data, nPeople, nTraining, imSize);
     
-    [validation_classes validation_vecs] = ...
+    [validation_classes, validation_vecs] = ...
         FormatTrainingData(validation_data, nPeople, nValidation, imSize);
 
 %{
     bestcv = 0;
-    for log2c = -1:3,
-      for log2g = -4:1,
-        cmd = ['-q -q -s 1 -t 1 -d 3 -v 5 -c ', num2str(2^log2c), ' -g ', num2str(2^log2g)];
-        cv = svmtrain(trainingclasses, training_vecs, cmd);
-        if (cv >= bestcv),
-          bestcv = cv; bestc = 2^log2c; bestg = 2^log2g;
-        end
-        fprintf('%g %g %g (best c=%g, g=%g, rate=%g)\n', log2c, log2g, cv, bestc, bestg, bestcv);
-      end
+    for k = 1:2
+        for log2c = -1:3,
+          for log2g = -4:1,
+            cmd = ['-q -s 1 -t 1 -d 3 -v 5 -c ', num2str(2^log2c), ' -g ', num2str(2^log2g), ' -k ', num2str(k)];
+            cv = svmtrain(training_classes, training_vecs, cmd);
+            if (cv >= bestcv),
+              bestcv = cv; bestc = 2^log2c; bestg = 2^log2g;
+            end
+            fprintf('%g %g %g (best c=%g, g=%g, rate=%g)\n', log2c, log2g, cv, bestc, bestg, bestcv);
+          end
+        end;
     end;
     %}
  
