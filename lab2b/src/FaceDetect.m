@@ -40,6 +40,7 @@ disp('[ Filtering with template ]');
 if templateMatching == 1 
     resp = NormCorr(im, template);
 else
+    template = zeros(32); % Ensure rectangle is correct shape when evaluating
     % Read Training Data
     nPeople = 20;   % number of people (rows of dataIm)
     nExamples = 32; % number of examples per person (columns of dataIm)
